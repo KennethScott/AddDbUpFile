@@ -51,12 +51,22 @@ namespace MadsKristensen.AddAnyFile
                     }
                 };
 
+                txtName.TextChanged += (a, b) =>
+                {
+                    ckEmbeddedResource.IsChecked = txtName.Text.Trim().ToLower().EndsWith(".sql");
+                };
+
             };
         }
 
         public string Input
         {
             get { return txtName.Text.Trim(); }
+        }
+
+        public bool IsEmbeddedResource
+        {
+            get { return ckEmbeddedResource.IsChecked ?? false; }
         }
 
         private void SetRandomTip()

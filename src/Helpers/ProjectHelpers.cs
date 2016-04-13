@@ -88,13 +88,17 @@ namespace MadsKristensen.AddAnyFile
             return null;
         }
 
-        public static ProjectItem AddFileToProject(this Project project, string file, string itemType = null)
+        public static ProjectItem AddFileToProject(this Project project, string file, string itemType = null, bool isEmbeddedResource = false)
         {
             if (project.IsKind(ProjectTypes.ASPNET_5))
                 return _dte.Solution.FindProjectItem(file);
 
             ProjectItem item = project.ProjectItems.AddFromFile(file);
-            item.SetItemType(itemType);
+
+            if (isEmbeddedResource)
+                item.Properties.Item("BuildAction").Value = 3;
+
+        item.SetItemType(itemType);
             return item;
         }
 

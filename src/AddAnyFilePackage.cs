@@ -14,6 +14,7 @@ using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
+using System.Dynamic;
 
 namespace MadsKristensen.AddAnyFile
 {
@@ -73,7 +74,8 @@ namespace MadsKristensen.AddAnyFile
             if (project == null)
                 return;
 
-            string input = PromptForFileName(folder).TrimStart('/', '\\').Replace("/", "\\");
+            dynamic inputValues = PromptForFileName(folder);
+            string input = inputValues.Input.TrimStart('/', '\\').Replace("/", "\\");
 
             if (string.IsNullOrEmpty(input))
                 return;
@@ -100,7 +102,7 @@ namespace MadsKristensen.AddAnyFile
 
                     try
                     {
-                        var projectItem = project.AddFileToProject(file);
+                        var projectItem = project.AddFileToProject(file, isEmbeddedResource: (bool)inputValues.IsEmbeddedResource);
 
                         if (file.EndsWith("__dummy__"))
                         {
@@ -195,7 +197,7 @@ namespace MadsKristensen.AddAnyFile
             return results.ToArray();
         }
 
-        private string PromptForFileName(string folder)
+        private dynamic PromptForFileName(string folder)
         {
             DirectoryInfo dir = new DirectoryInfo(folder);
             var dialog = new FileNameDialog(dir.Name);
@@ -205,7 +207,10 @@ namespace MadsKristensen.AddAnyFile
             dialog.Owner = window;
 
             var result = dialog.ShowDialog();
-            return (result.HasValue && result.Value) ? dialog.Input : string.Empty;
+            dynamic returnValues = new ExpandoObject();
+            returnValues.Input = (result.HasValue && result.Value) ? dialog.Input : string.Empty;
+            returnValues.IsEmbeddedResource = dialog.IsEmbeddedResource;
+            return returnValues;
         }
 
         private static string FindFolder(UIHierarchyItem item)
