@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
-using MadsKristensen.AddAnyFile;
+using KennethScott.AddDbUpFile;
 
 [assembly: AssemblyTitle(Vsix.Name)]
 [assembly: AssemblyDescription(Vsix.Description)]

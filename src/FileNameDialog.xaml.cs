@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
-namespace MadsKristensen.AddAnyFile
+namespace KennethScott.AddDbUpFile
 {
     public partial class FileNameDialog : Window
     {
@@ -26,7 +26,7 @@ namespace MadsKristensen.AddAnyFile
 
             Loaded += (s, e) =>
             {
-                Icon = BitmapFrame.Create(new Uri("pack://application:,,,/AddAnyFile;component/Resources/icon.png", UriKind.RelativeOrAbsolute));
+                Icon = BitmapFrame.Create(new Uri("pack://application:,,,/AddDbUpFile;component/Resources/icon.png", UriKind.RelativeOrAbsolute));
                 Title = Vsix.Name;
                 SetRandomTip();
 

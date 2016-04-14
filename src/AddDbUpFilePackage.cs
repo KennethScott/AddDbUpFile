@@ -16,14 +16,14 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using System.Dynamic;
 
-namespace MadsKristensen.AddAnyFile
+namespace KennethScott.AddDbUpFile
 {
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [ProvideAutoLoad(UIContextGuids80.SolutionExists)]
     [InstalledProductRegistration("#110", "#112", Vsix.Version, IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [Guid(PackageGuids.guidAddAnyFilePkgString)]
-    public sealed class AddAnyFilePackage : ExtensionPointPackage
+    [Guid(PackageGuids.guidAddDbUpFilePkgString)]
+    public sealed class AddDbUpFilePackage : ExtensionPointPackage
     {
         public static DTE2 _dte;
 
@@ -39,7 +39,7 @@ namespace MadsKristensen.AddAnyFile
             OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if (null != mcs)
             {
-                CommandID menuCommandID = new CommandID(PackageGuids.guidAddAnyFileCmdSet, PackageIds.cmdidMyCommand);
+                CommandID menuCommandID = new CommandID(PackageGuids.guidAddDbUpFileCmdSet, PackageIds.cmdidMyCommand);
                 var menuItem = new OleMenuCommand(MenuItemCallback, menuCommandID);
                 menuItem.BeforeQueryStatus += MenuItem_BeforeQueryStatus;
                 mcs.AddCommand(menuItem);

@@ -4,30 +4,30 @@
     <Extern href="stdidcmd.h"/>
     <Extern href="vsshlids.h"/>
 
-    <Commands package="guidAddAnyFilePkg">
+    <Commands package="guidAddDbUpFilePkg">
         <Buttons>
-            <Button guid="guidAddAnyFileCmdSet" id="cmdidMyCommand" priority="0x0200" type="Button">
+            <Button guid="guidAddDbUpFileCmdSet" id="cmdidMyCommand" priority="0x0200" type="Button">
                 <Parent guid="guidSHLMainMenu" id="IDG_VS_CTXT_PROJECT_ADD_ITEMS"/>
                 <CommandFlag>DynamicVisibility</CommandFlag>
                 <CommandFlag>DefaultDisabled</CommandFlag>
                 <Strings>
                     <CommandName>AddEmptyFile</CommandName>
-                    <ButtonText>New Empty File...</ButtonText>
+                    <ButtonText>New DbUp File...</ButtonText>
                 </Strings>
             </Button>
         </Buttons>
     </Commands>
 
     <KeyBindings>
-        <KeyBinding guid="guidAddAnyFileCmdSet" id="cmdidMyCommand" mod1="Shift" key1="VK_F2" editor="guidVSStd97"/>
+        <KeyBinding guid="guidAddDbUpFileCmdSet" id="cmdidMyCommand" mod1="Shift" key1="VK_F2" editor="guidVSStd97"/>
     </KeyBindings>
 
     <Symbols>
         <!-- This is the package guid. -->
-        <GuidSymbol name="guidAddAnyFilePkg" value="{27dd9dea-6dd2-403e-929d-3ff20d896c5e}" />
+        <GuidSymbol name="guidAddDbUpFilePkg" value="{27dd9dea-6dd2-403e-929d-3ff20d896c5e}" />
 
         <!-- This is the guid used to group the menu commands together -->
-        <GuidSymbol name="guidAddAnyFileCmdSet" value="{32af8a17-bbbc-4c56-877e-fc6c6575a8cf}">
+        <GuidSymbol name="guidAddDbUpFileCmdSet" value="{32af8a17-bbbc-4c56-877e-fc6c6575a8cf}">
             <IDSymbol name="cmdidMyCommand" value="0x0100" />
         </GuidSymbol>
     </Symbols>

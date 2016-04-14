@@ -12,11 +12,11 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 
-namespace MadsKristensen.AddAnyFile
+namespace KennethScott.AddDbUpFile
 {
     public static class ProjectHelpers
     {
-        static DTE2 _dte = AddAnyFilePackage._dte;
+        static DTE2 _dte = AddDbUpFilePackage._dte;
 
         public static string GetRootNamespace(this Project project)
         {
@@ -195,7 +195,7 @@ namespace MadsKristensen.AddAnyFile
 
         public static IComponentModel GetComponentModel()
         {
-            return (IComponentModel)AddAnyFilePackage.GetGlobalService(typeof(SComponentModel));
+            return (IComponentModel)AddDbUpFilePackage.GetGlobalService(typeof(SComponentModel));
         }
     }
 

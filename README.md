@@ -1,4 +1,4 @@
-# Add Any File
+# Add DbUp File
 
 [![Build status](https://ci.appveyor.com/api/projects/status/252jpryc38qah37x?svg=true)](https://ci.appveyor.com/project/madskristensen/addanyfile)
 

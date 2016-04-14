@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 
-namespace MadsKristensen.AddAnyFile
+namespace KennethScott.AddDbUpFile
 {
     static class TemplateMap
     {

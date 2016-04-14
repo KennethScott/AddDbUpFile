@@ -67,7 +67,7 @@
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.ApplicationInsights, Version=1.2.3.490, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.ApplicationInsights, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.1.2.3\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
       <Private>True</Private>
     </Reference>
@@ -161,15 +161,15 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddAnyFile.cs">
+    <Compile Include="AddDbUpFile.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>AddAnyFile.vsct</DependentUpon>
+      <DependentUpon>AddDbUpFile.vsct</DependentUpon>
     </Compile>
     <Compile Include="FileNameDialog.xaml.cs">
       <DependentUpon>FileNameDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AddAnyFilePackage.cs" />
+    <Compile Include="AddDbUpFilePackage.cs" />
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Helpers\ProjectHelpers.cs" />
     <Compile Include="Helpers\Telemetry.cs" />
@@ -232,11 +232,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <VSCTCompile Include="AddAnyFile.vsct">
+    <VSCTCompile Include="AddDbUpFile.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
       <SubType>Designer</SubType>
       <Generator>VsctGenerator</Generator>
-      <LastGenOutput>AddAnyFile.cs</LastGenOutput>
+      <LastGenOutput>AddDbUpFile.cs</LastGenOutput>
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
