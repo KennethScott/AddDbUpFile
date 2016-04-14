@@ -7,8 +7,8 @@ namespace KennethScott.AddDbUpFile
     /// </summary>
     internal sealed partial class PackageGuids
     {
-        public const string guidAddDbUpFilePkgString = "27dd9dea-6dd2-403e-929d-3ff20d896c5e";
-        public const string guidAddDbUpFileCmdSetString = "32af8a17-bbbc-4c56-877e-fc6c6575a8cf";
+        public const string guidAddDbUpFilePkgString = "FDDB1547-9DE3-4600-9E98-E8A15A1C6F3C";
+        public const string guidAddDbUpFileCmdSetString = "660D3287-59AD-4508-8DE5-B938F2A983DA";
         public static Guid guidAddDbUpFilePkg = new Guid(guidAddDbUpFilePkgString);
         public static Guid guidAddDbUpFileCmdSet = new Guid(guidAddDbUpFileCmdSetString);
     }

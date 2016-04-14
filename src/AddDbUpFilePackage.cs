@@ -32,7 +32,7 @@ namespace KennethScott.AddDbUpFile
             _dte = GetService(typeof(DTE)) as DTE2;
 
             Logger.Initialize(this, Vsix.Name);
-            Telemetry.Initialize(_dte, Vsix.Version, "e146dff7-f7c5-49ab-a7d8-3557375f6624");
+            Telemetry.Initialize(_dte, Vsix.Version, "04533DD8-75D9-4457-A524-3DA423AE18C7");
 
             base.Initialize();
 
