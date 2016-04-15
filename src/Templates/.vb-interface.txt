@@ -1,3 +1,0 @@
-﻿Public Interface {itemname}
-    $
-End Interface

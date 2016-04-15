@@ -86,6 +86,8 @@ namespace KennethScott.AddDbUpFile
             {
                 input = inputItem;
 
+                input = DateTime.Now.ToString("yyyyMMdd_HHmmss_") + input;
+
                 if (input.EndsWith("\\", StringComparison.Ordinal))
                 {
                     input = input + "__dummy__";
