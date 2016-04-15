@@ -32,7 +32,6 @@ namespace KennethScott.AddDbUpFile
             _dte = GetService(typeof(DTE)) as DTE2;
 
             Logger.Initialize(this, Vsix.Name);
-            Telemetry.Initialize(_dte, Vsix.Version, "04533DD8-75D9-4457-A524-3DA423AE18C7");
 
             base.Initialize();
 
@@ -110,7 +109,6 @@ namespace KennethScott.AddDbUpFile
 
                         if (file.EndsWith("__dummy__"))
                         {
-                            Telemetry.TrackEvent("Folder added");
                             projectItem.Delete();
                             continue;
                         }
@@ -157,7 +155,6 @@ namespace KennethScott.AddDbUpFile
             string template = await TemplateMap.GetTemplateFilePath(project, file);
 
             var props = new Dictionary<string, string>() { { "extension", extension.ToLowerInvariant() } };
-            Telemetry.TrackEvent("File added", props);
 
             if (!string.IsNullOrEmpty(template))
             {
