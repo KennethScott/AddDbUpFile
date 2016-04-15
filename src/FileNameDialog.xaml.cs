@@ -11,10 +11,7 @@ namespace KennethScott.AddDbUpFile
         private const string DEFAULT_TEXT = "Enter a file name";
         private static List<string> _tips = new List<string> {
             "Tip: 'folder/file.ext' also creates a new folder for the file",
-            "Tip: You can create files starting with a dot, like '.gitignore'",
-            "Tip: You can create files without file extensions, like 'LICENSE'",
-            "Tip: Create folder by ending the name with a forward slash",
-            "Tip: Use glob style syntax to add related files, like 'widget.(html,js)'",
+            "Tip: File extension defaults to .sql if left off",
             "Tip: Separate names with commas to add multiple files and folders"
         };
 
@@ -50,12 +47,6 @@ namespace KennethScott.AddDbUpFile
                         btnCreate.IsEnabled = true;
                     }
                 };
-
-                txtName.TextChanged += (a, b) =>
-                {
-                    ckEmbeddedResource.IsChecked = txtName.Text.Trim().ToLower().EndsWith(".sql");
-                };
-
             };
         }
 

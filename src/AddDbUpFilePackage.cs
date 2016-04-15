@@ -86,11 +86,13 @@ namespace KennethScott.AddDbUpFile
             {
                 input = inputItem;
 
-                input = DateTime.Now.ToString("yyyyMMdd_HHmmss_") + input;
-
                 if (input.EndsWith("\\", StringComparison.Ordinal))
                 {
                     input = input + "__dummy__";
+                }
+                else
+                {
+                    input = DateTime.Now.ToString("yyyyMMdd_HHmmss_") + input + (input.EndsWith(".sql") ? String.Empty : ".sql");
                 }
 
                 string file = Path.Combine(folder, input);

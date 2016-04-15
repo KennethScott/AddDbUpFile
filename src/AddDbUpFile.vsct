@@ -24,10 +24,10 @@
 
     <Symbols>
         <!-- This is the package guid. -->
-        <GuidSymbol name="guidAddDbUpFilePkg" value="{27dd9dea-6dd2-403e-929d-3ff20d896c5e}" />
+        <GuidSymbol name="guidAddDbUpFilePkg" value="{FDDB1547-9DE3-4600-9E98-E8A15A1C6F3C}" />
 
         <!-- This is the guid used to group the menu commands together -->
-        <GuidSymbol name="guidAddDbUpFileCmdSet" value="{32af8a17-bbbc-4c56-877e-fc6c6575a8cf}">
+        <GuidSymbol name="guidAddDbUpFileCmdSet" value="{660D3287-59AD-4508-8DE5-B938F2A983DA}">
             <IDSymbol name="cmdidMyCommand" value="0x0100" />
         </GuidSymbol>
     </Symbols>
