@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -12,7 +13,7 @@ namespace KennethScott.AddDbUpFile
         private static List<string> _tips = new List<string> {
             "Tip: 'folder/file.ext' also creates a new folder for the file",
             "Tip: File extension defaults to .sql if left off",
-            "Tip: Separate names with commas to add multiple files and folders"
+            "Tip: Separate names with commas to add multiple files and folders" 
         };
 
         public FileNameDialog(string folder)
@@ -71,6 +72,12 @@ namespace KennethScott.AddDbUpFile
         {
             DialogResult = true;
             Close();
+        }
+
+        private void txtName_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            txtName.Text = String.Join(String.Empty, txtName.Text.Split(Path.GetInvalidFileNameChars()));
+            txtName.CaretIndex = txtName.Text.Length;
         }
     }
 }

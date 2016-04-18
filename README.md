@@ -1,16 +1,18 @@
 # Add DbUp File
 
 
-A Visual Studio extension for easily adding new dbup sql files to any project. Simply hit Shift+F2 to create an empty file in the
-selected folder or in the same folder as the selected file.
+Shamelessly tweaked and stripped down version of Mads Kristensen's excellent AddAnyFile extension. It has one simple purpose - to provide a way 
+for easily adding new dbup sql files to any project. Simply hit Shift+F2 to create an empty script file in the selected folder or in the same folder 
+as the selected file.  
 
 See the [changelog](CHANGELOG.md) for updates and roadmap.
 
 ### Features
 
-- Files are automatically prefixed with 
+- Files are automatically prefixed with ccyymmdd_hhmmss_
 - Create deeper folder structures easily if required
 - Create folders when the entered name ends with a /
+- Marks new files as embedded resources by default
 
 ![Add new file dialog](art/dialog.png)
 
