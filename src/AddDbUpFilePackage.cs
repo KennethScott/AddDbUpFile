@@ -91,7 +91,7 @@ namespace KennethScott.AddDbUpFile
                 }
                 else
                 {
-                    input = DateTime.Now.ToString("yyyyMMdd_HHmmss_") + input + (input.EndsWith(".sql") ? String.Empty : ".sql");
+                    input = DateTime.Now.ToString("yyyyMMdd_HHmmss_") + input;
                 }
 
                 string file = Path.Combine(folder, input);

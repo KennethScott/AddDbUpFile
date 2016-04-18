@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.Linq;
 
 namespace KennethScott.AddDbUpFile
 {
@@ -11,8 +12,6 @@ namespace KennethScott.AddDbUpFile
     {
         private const string DEFAULT_TEXT = "Enter a file name";
         private static List<string> _tips = new List<string> {
-            "Tip: 'folder/file.ext' also creates a new folder for the file",
-            "Tip: File extension defaults to .sql if left off",
             "Tip: Separate names with commas to add multiple files and folders" 
         };
 
@@ -51,6 +50,25 @@ namespace KennethScott.AddDbUpFile
             };
         }
 
+        private void txtName_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Ignore invalid characters \/:*?"<>|
+            if (e.Key == Key.Oem5                                                               // \    
+                || e.Key == Key.Oem2                                                            // /   
+                || (e.Key == Key.Oem2 && e.KeyboardDevice.Modifiers == ModifierKeys.Shift)      // ? 
+                || (e.Key == Key.Oem5 && e.KeyboardDevice.Modifiers == ModifierKeys.Shift)      // |
+                || (e.Key == Key.OemComma && e.KeyboardDevice.Modifiers == ModifierKeys.Shift)  // <
+                || (e.Key == Key.OemPeriod && e.KeyboardDevice.Modifiers == ModifierKeys.Shift) // >
+                || (e.Key == Key.Oem1 && e.KeyboardDevice.Modifiers == ModifierKeys.Shift)      // :
+                || (e.Key == Key.D8 && e.KeyboardDevice.Modifiers == ModifierKeys.Shift)        // *
+                || (e.Key == Key.Oem7 && e.KeyboardDevice.Modifiers == ModifierKeys.Shift))     // "
+                e.Handled = true;
+
+            // Only allow one period
+            if (e.Key == Key.OemPeriod && txtName.Text.Contains("."))
+                e.Handled = true;
+        }
+
         public string Input
         {
             get { return txtName.Text.Trim(); }
@@ -70,14 +88,42 @@ namespace KennethScott.AddDbUpFile
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = true;
-            Close();
+            if (txtName.Text.Count(x => x == '.') <= 1)
+            {
+                DialogResult = true;
+                Close();
+            }
         }
 
         private void txtName_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
+            // Remove invalid characters 
             txtName.Text = String.Join(String.Empty, txtName.Text.Split(Path.GetInvalidFileNameChars()));
+
+            // Only allow first period
+            if (txtName.Text.Count(x => x == '.') > 1)
+            {
+                string reversed = Reverse(txtName.Text);
+
+                string[] x = reversed.Split(new char[] { '.' }, 2);
+                if (x.Length > 1)
+                {
+                    x[1] = x[1].Replace(".", "");
+                }
+
+                reversed = String.Join(".", x);
+
+                txtName.Text = Reverse(reversed);
+            }
+
             txtName.CaretIndex = txtName.Text.Length;
+        }
+
+        private string Reverse(string s)
+        {
+            char[] temp = s.ToCharArray();
+            Array.Reverse(temp);
+            return new string(temp);
         }
     }
 }
