@@ -1,2 +1,52 @@
--- Description
-$
+/*
+   Project/Ticket#: 
+   Description:
+*/
+
+---------------------------------------------
+-- REMINDER:  Do not include "USE" statement --
+---------------------------------------------
+
+SET XACT_ABORT ON;    
+
+BEGIN TRY
+    BEGIN TRANSACTION MyTran;
+
+
+		-- SQL CODE GOES HERE --
+		$
+	
+
+    COMMIT TRANSACTION MyTran;
+END TRY	
+BEGIN CATCH
+	-- XACT_STATE gives a little more information than @@TRANCOUNT
+	-- XACT_STATE not only tells if there is a transaction, it also
+	-- tells the state of the transaction.
+	-- XACT_STATE returns one of three values:
+	--           1 = The transaction is committable. 
+	--           0 = There is no transaction. (a commit or rollback operation would generate an error.)
+	--          -1 = The transaction is uncommittable and should be rolled back.
+    IF XACT_STATE() <> 0    -- We are in a CATCH BLOCK.  If there's a transaction, roll it back.
+        BEGIN
+            PRINT 'Transaction is being rolled back.';
+            ROLLBACK TRANSACTION MyTran;            
+        END;
+
+	-- Declare and set variables to hold error information.
+    DECLARE
+    	@ERROR_SEVERITY INT = ERROR_SEVERITY(),
+    	@ERROR_STATE	INT = ERROR_STATE(),
+    	@ERROR_NUMBER	INT = ERROR_NUMBER(),
+    	@ERROR_LINE		INT = ERROR_LINE(),
+    	@ERROR_MESSAGE	NVARCHAR(4000) = ERROR_MESSAGE();
+
+	-- RAISEERROR, in this instance, sends an error back to the caller of the stored procedure
+    RAISERROR('Msg %d, Line %d: %s',
+    	@ERROR_SEVERITY,
+    	@ERROR_STATE,
+    	@ERROR_NUMBER,
+    	@ERROR_LINE,
+    	@ERROR_MESSAGE);
+
+END CATCH;		
