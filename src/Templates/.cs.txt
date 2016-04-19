@@ -4,7 +4,7 @@ using DbUp.Engine;
 
 namespace {namespace}
 {
-    class {itemname} : IScript
+    public class CS_{itemname} : IScript
     {
         public string ProvideScript(Func<IDbCommand> commandFactory)
         {

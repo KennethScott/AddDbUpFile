@@ -116,6 +116,11 @@ namespace KennethScott.AddDbUpFile
                 txtName.Text = Reverse(reversed);
             }
 
+            if (txtName.Text.EndsWith(".sql"))
+                ckEmbeddedResource.IsChecked = true;
+            else if (txtName.Text.EndsWith(".cs"))
+                ckEmbeddedResource.IsChecked = false;
+
             txtName.CaretIndex = txtName.Text.Length;
         }
 

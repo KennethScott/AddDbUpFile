@@ -12,7 +12,8 @@ See the [changelog](CHANGELOG.md) for updates and roadmap.
 - Files are automatically prefixed with ccyymmdd_hhmmss_
 - Create deeper folder structures easily if required
 - Create folders when the entered name ends with a /
-- Marks new files as embedded resources by default
+- Marks new sql files as embedded resources (but not cs files)
+- Sql and cs templates relevant to dbup 
 
 ![Add new file dialog](art/dialog.png)
 
