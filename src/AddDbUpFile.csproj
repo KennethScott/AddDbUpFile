@@ -173,6 +173,9 @@
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
     <Compile Include="TemplateMap.cs" />
+    <Content Include="Templates\.cs.txt">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Templates\.sql.txt">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
