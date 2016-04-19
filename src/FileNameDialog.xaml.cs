@@ -12,7 +12,7 @@ namespace KennethScott.AddDbUpFile
     {
         private const string DEFAULT_TEXT = "Enter a file name";
         private static List<string> _tips = new List<string> {
-            "Tip: Separate names with commas to add multiple files and folders" 
+            "Tip: Remember to include extension (.sql or .cs)" 
         };
 
         public FileNameDialog(string folder)
@@ -44,8 +44,13 @@ namespace KennethScott.AddDbUpFile
                     else if (txtName.Text == DEFAULT_TEXT)
                     {
                         txtName.Text = string.Empty;
-                        btnCreate.IsEnabled = true;
                     }
+                };
+
+                txtName.PreviewMouseDown += (a, b) =>
+                {
+                    if (txtName.Text == DEFAULT_TEXT)
+                        txtName.Text = string.Empty;
                 };
             };
         }
@@ -122,6 +127,8 @@ namespace KennethScott.AddDbUpFile
                 ckEmbeddedResource.IsChecked = false;
 
             txtName.CaretIndex = txtName.Text.Length;
+
+            btnCreate.IsEnabled = (txtName.Name.EndsWith(".cs") || txtName.Text.EndsWith(".sql"));
         }
 
         private string Reverse(string s)
