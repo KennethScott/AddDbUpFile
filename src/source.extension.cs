@@ -6,7 +6,7 @@ namespace KennethScott.AddDbUpFile
         public const string Name = "Add DbUp File";
         public const string Description = "The fastest and easiest way to add a DbUp file to any project";
         public const string Language = "en-US";
-        public const string Version = "1.3";
+        public const string Version = "1.4";
         public const string Author = "Kenneth Scott";
         public const string Tags = "file, add, template, dbup";
     }

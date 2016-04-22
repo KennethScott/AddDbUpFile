@@ -1,6 +1,11 @@
 
 # Changelog
 
+## 1.4
+**2016-04-22**
+
+- [x] Fixed bug where sql files weren't being marked as embedded resource by default
+
 ## 1.3
 **2016-04-22**
 
