@@ -1,8 +1,12 @@
 
 # Changelog
 
-## 1.2
+## 1.3
+**2016-04-22**
 
+- [x] Fixed bug where extension dropdown didn't move as the dialog grew (when typing long filenames)
+
+## 1.2
 **2016-04-21**
 
 - [x] Fixed bug with editing text causing cursor to jump to end
