@@ -1,6 +1,15 @@
 
 # Changelog
 
+## 1.2
+
+**2016-04-21**
+
+- [x] Fixed bug with editing text causing cursor to jump to end
+- [x] Added dropdown for file extensions
+- [x] Reenabled ability to create folders via forward-slash
+- [x] Updated sql template
+
 ## 1.0
 **2016-04-17**
 

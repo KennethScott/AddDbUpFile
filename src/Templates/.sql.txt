@@ -12,7 +12,7 @@ BEGIN TRY
 
 
 		-- SQL CODE GOES HERE --
-		$
+		$$
 	
 
     COMMIT TRANSACTION MyTran;

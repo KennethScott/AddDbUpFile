@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Linq;
+using System.Windows.Controls;
 
 namespace KennethScott.AddDbUpFile
 {
@@ -12,7 +13,9 @@ namespace KennethScott.AddDbUpFile
     {
         private const string DEFAULT_TEXT = "Enter a file name";
         private static List<string> _tips = new List<string> {
-            "Tip: Remember to include extension (.sql or .cs)" 
+            "Tip: 'folder/file' also creates a new folder for the file",
+            "Tip: Create folder by ending the name with a forward slash",
+            "Tip: Separate names with commas to add multiple files and folders"
         };
 
         public FileNameDialog(string folder)
@@ -57,9 +60,10 @@ namespace KennethScott.AddDbUpFile
 
         private void txtName_KeyDown(object sender, KeyEventArgs e)
         {
-            // Ignore invalid characters \/:*?"<>|
+            // Ignore invalid characters \/:*?"<>| and . 
             if (e.Key == Key.Oem5                                                               // \    
-                || e.Key == Key.Oem2                                                            // /   
+                //|| e.Key == Key.Oem2                                                            // /    Allow slash for creating folders
+                || e.Key == Key.OemPeriod                                                       // .
                 || (e.Key == Key.Oem2 && e.KeyboardDevice.Modifiers == ModifierKeys.Shift)      // ? 
                 || (e.Key == Key.Oem5 && e.KeyboardDevice.Modifiers == ModifierKeys.Shift)      // |
                 || (e.Key == Key.OemComma && e.KeyboardDevice.Modifiers == ModifierKeys.Shift)  // <
@@ -68,15 +72,17 @@ namespace KennethScott.AddDbUpFile
                 || (e.Key == Key.D8 && e.KeyboardDevice.Modifiers == ModifierKeys.Shift)        // *
                 || (e.Key == Key.Oem7 && e.KeyboardDevice.Modifiers == ModifierKeys.Shift))     // "
                 e.Handled = true;
-
-            // Only allow one period
-            if (e.Key == Key.OemPeriod && txtName.Text.Contains("."))
-                e.Handled = true;
         }
 
         public string Input
         {
-            get { return txtName.Text.Trim(); }
+            get
+            {
+                string input = txtName.Text.Trim();
+                if (!input.EndsWith("/"))
+                    input += ((ComboBoxItem)cmbExtension.SelectedItem).Content.ToString();
+                return input;
+            }
         }
 
         public bool IsEmbeddedResource
@@ -93,49 +99,21 @@ namespace KennethScott.AddDbUpFile
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (txtName.Text.Count(x => x == '.') <= 1)
-            {
-                DialogResult = true;
-                Close();
-            }
+            DialogResult = true;
+            Close();
         }
 
         private void txtName_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            // Remove invalid characters 
-            txtName.Text = String.Join(String.Empty, txtName.Text.Split(Path.GetInvalidFileNameChars()));
+            // Remove invalid filename characters and periods - but leave slash for folder creation
+            txtName.Text = String.Join(String.Empty, txtName.Text.Split(new char[] { '\\', ':', '*', '?', '"', '<', '>', '|', '.' } ));
 
-            // Only allow first period
-            if (txtName.Text.Count(x => x == '.') > 1)
-            {
-                string reversed = Reverse(txtName.Text);
-
-                string[] x = reversed.Split(new char[] { '.' }, 2);
-                if (x.Length > 1)
-                {
-                    x[1] = x[1].Replace(".", "");
-                }
-
-                reversed = String.Join(".", x);
-
-                txtName.Text = Reverse(reversed);
-            }
-
-            if (txtName.Text.EndsWith(".sql"))
-                ckEmbeddedResource.IsChecked = true;
-            else if (txtName.Text.EndsWith(".cs"))
-                ckEmbeddedResource.IsChecked = false;
-
-            txtName.CaretIndex = txtName.Text.Length;
-
-            btnCreate.IsEnabled = (txtName.Name.EndsWith(".cs") || txtName.Text.EndsWith(".sql"));
+            btnCreate.IsEnabled = (txtName.Text != DEFAULT_TEXT && txtName.Text.Length > 0);
         }
 
-        private string Reverse(string s)
+        private void cmbExtension_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            char[] temp = s.ToCharArray();
-            Array.Reverse(temp);
-            return new string(temp);
+            ckEmbeddedResource.IsChecked = (((ComboBoxItem)cmbExtension.SelectedItem).Content.ToString() == ".sql");
         }
     }
 }

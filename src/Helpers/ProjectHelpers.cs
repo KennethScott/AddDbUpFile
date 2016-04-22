@@ -95,8 +95,8 @@ namespace KennethScott.AddDbUpFile
 
             ProjectItem item = project.ProjectItems.AddFromFile(file);
 
-            if (isEmbeddedResource)
-                item.Properties.Item("BuildAction").Value = 3;
+            //if (isEmbeddedResource)
+            //    item.Properties.Item("BuildAction").Value = 3;
 
         item.SetItemType(itemType);
             return item;

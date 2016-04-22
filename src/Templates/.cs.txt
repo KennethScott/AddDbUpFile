@@ -27,7 +27,7 @@ namespace {namespace}
             //}
 
             //return scriptBuilder;
-			$
+			$$
             return "select 1";
         }
     }

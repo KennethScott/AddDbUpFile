@@ -23,6 +23,15 @@ A new button is added to the context menu in Solution Explorer.
 
 You can either click that button or use the keybord shortcut **Shift+F2**.
 
+### Create folders
+
+Create additional folders for your file by using forward-slash to
+specify the structure.
+
+For example, by typing **scripts/test** in the dialog, the
+folder **scripts** is created if it doesn't exist and the file
+**test.{selected ext}** is then placed into it.
+
 ## Contribute
 Check out the [contribution guidelines](.github/CONTRIBUTING.md)
 if you want to contribute to this project.

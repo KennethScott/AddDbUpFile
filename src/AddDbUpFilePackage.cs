@@ -91,7 +91,8 @@ namespace KennethScott.AddDbUpFile
                 }
                 else
                 {
-                    input = DateTime.Now.ToString("yyyyMMdd_HHmmss_") + input;
+                    // only prepend the date/time onto filenames (not folders)
+                    input = input.Insert(input.LastIndexOf("\\")+1, DateTime.Now.ToString("yyyyMMdd_HHmmss_"));
                 }
 
                 string file = Path.Combine(folder, input);
@@ -158,8 +159,8 @@ namespace KennethScott.AddDbUpFile
 
             if (!string.IsNullOrEmpty(template))
             {
-                int index = template.IndexOf('$');
-                template = template.Remove(index, 1);
+                int index = template.IndexOf("$$");
+                template = template.Remove(index, 2);
                 File.WriteAllText(file, template, encoding);
                 return index;
             }
