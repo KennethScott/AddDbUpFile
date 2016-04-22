@@ -3,9 +3,7 @@
    Description:
 -------------------------------------------------------------------------------------*/
 
------------------------------------------------------------------------------------
--- REMINDER:  Do not include "USE" statement if defaulting from ConnectionString --
------------------------------------------------------------------------------------
+USE $DatabaseName$
 
 SET XACT_ABORT ON;    
 
@@ -21,8 +19,7 @@ BEGIN TRY
 END TRY	
 BEGIN CATCH
 	-- XACT_STATE gives a little more information than @@TRANCOUNT
-	-- XACT_STATE not only tells if there is a transaction, it also
-	-- tells the state of the transaction.
+	-- XACT_STATE not only tells if there is a transaction, it also tells the state of the transaction.
 	-- XACT_STATE returns one of three values:
 	--           1 = The transaction is committable. 
 	--           0 = There is no transaction. (a commit or rollback operation would generate an error.)
