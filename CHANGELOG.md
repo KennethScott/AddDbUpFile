@@ -1,6 +1,11 @@
 
 # Changelog
 
+## 1.5
+**2016-04-23**
+
+- [x] Fixed bug where cursor positioning in sql template wasn't working
+
 ## 1.4
 **2016-04-22**
 

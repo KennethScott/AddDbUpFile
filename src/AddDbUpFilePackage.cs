@@ -119,23 +119,17 @@ namespace KennethScott.AddDbUpFile
                         // Move cursor into position
                         if (position > 0)
                         {
-                            var view = ProjectHelpers.GetCurentTextView();
+                            var view = ProjectHelpers.GetCurentTextView(file);
 
                             if (view != null)
                                 view.Caret.MoveTo(new SnapshotPoint(view.TextBuffer.CurrentSnapshot, position));
                         }
 
+                        // I have no idea why but only doing Activate once after SyncwithActiveDocument does not work 100% of the time.
+                        _dte.ActiveDocument.Activate();
                         _dte.ExecuteCommand("SolutionExplorer.SyncWithActiveDocument");
                         _dte.ActiveDocument.Activate();
 
-                        await Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
-                        {
-                            var command = _dte.Commands.Item("Edit.FormatDocument");
-
-                            if (command.IsAvailable)
-                                _dte.ExecuteCommand(command.Name);
-
-                        }), DispatcherPriority.SystemIdle, null);
                     }
                     catch (Exception ex)
                     {
