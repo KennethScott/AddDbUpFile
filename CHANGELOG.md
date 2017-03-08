@@ -1,6 +1,12 @@
 
 # Changelog
 
+## 1.6
+**2017-03-07**
+
+- [x] Added support for Visual Studio 2017
+
+
 ## 1.5
 **2016-04-23**
 
