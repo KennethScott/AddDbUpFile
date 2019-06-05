@@ -9,6 +9,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 
@@ -53,7 +54,13 @@ namespace KennethScott.AddDbUpFile
 
         public static string GetRootFolder(this Project project)
         {
-            if (project == null || string.IsNullOrEmpty(project.FullName))
+            if (project == null)
+                return null;
+
+            if (project.IsKind("{66A26720-8FB5-11D2-AA7E-00C04F688DDE}")) //ProjectKinds.vsProjectKindSolutionFolder
+                return Path.GetDirectoryName(_dte.Solution.FullName);
+
+            if (string.IsNullOrEmpty(project.FullName))
                 return null;
 
             string fullPath;
@@ -137,7 +144,7 @@ namespace KennethScott.AddDbUpFile
         {
             try
             {
-                if (!parent.IsKind(ProjectKinds.vsProjectKindSolutionFolder) && parent.Collection == null)  // Unloaded
+                if (!parent.IsKind("{66A26720-8FB5-11D2-AA7E-00C04F688DDE}") && parent.Collection == null)  // Unloaded
                     return Enumerable.Empty<Project>();
 
                 if (!string.IsNullOrEmpty(parent.FullName))
@@ -158,16 +165,15 @@ namespace KennethScott.AddDbUpFile
         {
             try
             {
-                var activeSolutionProjects = _dte.ActiveSolutionProjects as Array;
 
-                if (activeSolutionProjects != null && activeSolutionProjects.Length > 0)
+                if (_dte.ActiveSolutionProjects is Array activeSolutionProjects && activeSolutionProjects.Length > 0)
                     return activeSolutionProjects.GetValue(0) as Project;
 
-                var doc = _dte.ActiveDocument;
+                Document doc = _dte.ActiveDocument;
 
                 if (doc != null && !string.IsNullOrEmpty(doc.FullName))
                 {
-                    var item = (_dte.Solution != null) ? _dte.Solution.FindProjectItem(doc.FullName) : null;
+                    ProjectItem item = _dte.Solution?.FindProjectItem(doc.FullName);
 
                     if (item != null)
                         return item.ContainingProject;
@@ -181,13 +187,21 @@ namespace KennethScott.AddDbUpFile
             return null;
         }
 
-        public static IWpfTextView GetCurentTextView(string file)
+        public static IWpfTextView GetCurentTextView()
         {
-            var componentModel = GetComponentModel();
+            IComponentModel componentModel = GetComponentModel();
             if (componentModel == null) return null;
-            var editorAdapter = componentModel.GetService<IVsEditorAdaptersFactoryService>();
+            IVsEditorAdaptersFactoryService editorAdapter = componentModel.GetService<IVsEditorAdaptersFactoryService>();
 
-            return editorAdapter.GetWpfTextView(GetIVsTextView(file));
+            return editorAdapter.GetWpfTextView(GetCurrentNativeTextView());
+        }
+
+        public static IVsTextView GetCurrentNativeTextView()
+        {
+            var textManager = (IVsTextManager)ServiceProvider.GlobalProvider.GetService(typeof(SVsTextManager));
+
+            ErrorHandler.ThrowOnFailure(textManager.GetActiveView(1, null, out IVsTextView activeView));
+            return activeView;
         }
 
         public static IComponentModel GetComponentModel()
@@ -195,30 +209,37 @@ namespace KennethScott.AddDbUpFile
             return (IComponentModel)AddDbUpFilePackage.GetGlobalService(typeof(SComponentModel));
         }
 
-        /// <summary>
-        /// Returns an IVsTextView for the given file path, if the given file is open in Visual Studio.
-        /// </summary>
-        /// <param name="filePath">Full Path of the file you are looking for.</param>
-        /// <returns>The IVsTextView for this file, if it is open, null otherwise.</returns>
-        public static Microsoft.VisualStudio.TextManager.Interop.IVsTextView GetIVsTextView(string filePath)
+        public static object GetSelectedItem()
         {
-            var dte2 = (EnvDTE80.DTE2)Microsoft.VisualStudio.Shell.Package.GetGlobalService(typeof(Microsoft.VisualStudio.Shell.Interop.SDTE));
-            Microsoft.VisualStudio.OLE.Interop.IServiceProvider sp = (Microsoft.VisualStudio.OLE.Interop.IServiceProvider)dte2;
-            Microsoft.VisualStudio.Shell.ServiceProvider serviceProvider = new Microsoft.VisualStudio.Shell.ServiceProvider(sp);
+            object selectedObject = null;
 
-            Microsoft.VisualStudio.Shell.Interop.IVsUIHierarchy uiHierarchy;
-            uint itemID;
-            Microsoft.VisualStudio.Shell.Interop.IVsWindowFrame windowFrame;
-            if (Microsoft.VisualStudio.Shell.VsShellUtilities.IsDocumentOpen(serviceProvider, filePath, Guid.Empty,
-                                            out uiHierarchy, out itemID, out windowFrame))
+            var monitorSelection = (IVsMonitorSelection)Package.GetGlobalService(typeof(SVsShellMonitorSelection));
+
+            try
             {
-                // Get the IVsTextView from the windowFrame.
-                return Microsoft.VisualStudio.Shell.VsShellUtilities.GetTextView(windowFrame);
+                monitorSelection.GetCurrentSelection(out IntPtr hierarchyPointer,
+                                                 out uint itemId,
+                                                 out IVsMultiItemSelect multiItemSelect,
+                                                 out IntPtr selectionContainerPointer);
+
+
+                if (Marshal.GetTypedObjectForIUnknown(
+                                                     hierarchyPointer,
+                                                     typeof(IVsHierarchy)) is IVsHierarchy selectedHierarchy)
+                {
+                    ErrorHandler.ThrowOnFailure(selectedHierarchy.GetProperty(itemId, (int)__VSHPROPID.VSHPROPID_ExtObject, out selectedObject));
+                }
+
+                Marshal.Release(hierarchyPointer);
+                Marshal.Release(selectionContainerPointer);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.Write(ex);
             }
 
-            return null;
+            return selectedObject;
         }
-
     }
 
     public static class ProjectTypes

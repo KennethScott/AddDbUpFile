@@ -5,7 +5,7 @@ Download the extension at the [VS Gallery](https://visualstudiogallery.msdn.micr
 ---
 
 Shamelessly tweaked and stripped down version of Mads Kristensen's excellent AddAnyFile extension. It has one simple purpose - to provide a way 
-for easily adding new dbup sql and cs files to any project. Simply hit Shift+F2 to create an empty script file in the selected folder or in the same folder 
+for easily adding new [dbup](https://github.com/DbUp/DbUp) sql and cs files to any project. Simply hit Shift+F2 to create an empty script file in the selected folder or in the same folder 
 as the selected file.  
 
 See the [changelog](CHANGELOG.md) for updates and roadmap.

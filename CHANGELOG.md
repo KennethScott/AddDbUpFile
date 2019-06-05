@@ -1,11 +1,16 @@
 
 # Changelog
 
+## 1.7
+**2019-06-02**
+
+- [x] Added support for Visual Studio 2019.  Also switched to nuget packages following Mads original code.
+
+
 ## 1.6
 **2017-03-07**
 
 - [x] Added support for Visual Studio 2017
-
 
 ## 1.5
 **2016-04-23**

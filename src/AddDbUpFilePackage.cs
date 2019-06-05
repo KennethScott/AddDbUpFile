@@ -12,64 +12,60 @@ using System.Windows.Threading;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using System.Dynamic;
+using System.Threading;
 
 namespace KennethScott.AddDbUpFile
 {
-    [PackageRegistration(UseManagedResourcesOnly = true)]
-    [ProvideAutoLoad(UIContextGuids80.SolutionExists)]
+    [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [InstalledProductRegistration("#110", "#112", Vsix.Version, IconResourceID = 400)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(PackageGuids.guidAddDbUpFilePkgString)]
-    public sealed class AddDbUpFilePackage : ExtensionPointPackage
+    public sealed class AddDbUpFilePackage : AsyncPackage
     {
         public static DTE2 _dte;
 
-        protected override void Initialize()
+        protected override async System.Threading.Tasks.Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            _dte = GetService(typeof(DTE)) as DTE2;
+            await JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            _dte = await GetServiceAsync(typeof(DTE)) as DTE2;
 
             Logger.Initialize(this, Vsix.Name);
 
-            base.Initialize();
-
-            OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
-            if (null != mcs)
+            if (await GetServiceAsync(typeof(IMenuCommandService)) is OleMenuCommandService mcs)
             {
-                CommandID menuCommandID = new CommandID(PackageGuids.guidAddDbUpFileCmdSet, PackageIds.cmdidMyCommand);
-                var menuItem = new OleMenuCommand(MenuItemCallback, menuCommandID);
-                menuItem.BeforeQueryStatus += MenuItem_BeforeQueryStatus;
+                var menuCommandID = new CommandID(PackageGuids.guidAddDbUpFileCmdSet, PackageIds.cmdidMyCommand);
+                var menuItem = new OleMenuCommand(ExecuteAsync, menuCommandID);
                 mcs.AddCommand(menuItem);
             }
         }
 
-        private void MenuItem_BeforeQueryStatus(object sender, EventArgs e)
+        //private void MenuItem_BeforeQueryStatus(object sender, EventArgs e)
+        //{
+        //    var button = (OleMenuCommand)sender;
+        //    button.Visible = button.Enabled = false;
+
+        //    UIHierarchyItem item = GetSelectedItem();
+        //    var project = item.Object as Project;
+
+        //    if (project == null || !project.Kind.Equals(EnvDTE.Constants.vsProjectKindSolutionItems, StringComparison.OrdinalIgnoreCase))
+        //        button.Visible = button.Enabled = true;
+        //}
+
+        private async void ExecuteAsync(object sender, EventArgs e)
         {
-            var button = (OleMenuCommand)sender;
-            button.Visible = button.Enabled = false;
-
-            UIHierarchyItem item = GetSelectedItem();
-            var project = item.Object as Project;
-
-            if (project == null || !project.Kind.Equals(EnvDTE.Constants.vsProjectKindSolutionItems, StringComparison.OrdinalIgnoreCase))
-                button.Visible = button.Enabled = true;
-        }
-
-        private async void MenuItemCallback(object sender, EventArgs e)
-        {
-            UIHierarchyItem item = GetSelectedItem();
-
-            if (item == null)
-                return;
-
+            object item = ProjectHelpers.GetSelectedItem();
             string folder = FindFolder(item);
 
             if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
                 return;
 
-            Project project = ProjectHelpers.GetActiveProject();
+            var selectedItem = item as ProjectItem;
+            var selectedProject = item as Project;
+            Project project = selectedItem?.ContainingProject ?? selectedProject ?? ProjectHelpers.GetActiveProject();
+
             if (project == null)
                 return;
 
@@ -95,31 +91,42 @@ namespace KennethScott.AddDbUpFile
                     input = input.Insert(input.LastIndexOf("\\")+1, DateTime.Now.ToString("yyyyMMdd_HHmmss_"));
                 }
 
-                string file = Path.Combine(folder, input);
-                string dir = Path.GetDirectoryName(file);
+                var file = new FileInfo(Path.Combine(folder, input));
+                string dir = file.DirectoryName;
 
                 PackageUtilities.EnsureOutputPath(dir);
 
-                if (!File.Exists(file))
+                if (!file.Exists)
                 {
-                    int position = await WriteFile(project, file);
+                    int position = await WriteFileAsync(project, file.FullName);
 
                     try
                     {
-                        var projectItem = project.AddFileToProject(file, isEmbeddedResource: (bool)inputValues.IsEmbeddedResource);
-
-                        if (file.EndsWith("__dummy__"))
+                        ProjectItem projectItem = null;
+                        if (item is ProjectItem projItem)
                         {
-                            projectItem.Delete();
+                            if ("{6BB5F8F0-4483-11D3-8BCF-00C04F8EC28C}" == projItem.Kind) // Constants.vsProjectItemKindVirtualFolder
+                            {
+                                projectItem = projItem.ProjectItems.AddFromFile(file.FullName);
+                            }
+                        }
+                        if (projectItem == null)
+                        {
+                            project.AddFileToProject(file.FullName, isEmbeddedResource: (bool)inputValues.IsEmbeddedResource);
+                        }
+                          
+                        if (file.FullName.EndsWith("__dummy__"))
+                        {
+                            projectItem?.Delete();
                             continue;
                         }
 
-                        VsShellUtilities.OpenDocument(this, file);
+                        VsShellUtilities.OpenDocument(this, file.FullName);
 
                         // Move cursor into position
                         if (position > 0)
                         {
-                            var view = ProjectHelpers.GetCurentTextView(file);
+                            Microsoft.VisualStudio.Text.Editor.IWpfTextView view = ProjectHelpers.GetCurentTextView();
 
                             if (view != null)
                                 view.Caret.MoveTo(new SnapshotPoint(view.TextBuffer.CurrentSnapshot, position));
@@ -143,24 +150,46 @@ namespace KennethScott.AddDbUpFile
             }
         }
 
-        private static async Task<int> WriteFile(Project project, string file)
+        private static async Task<int> WriteFileAsync(Project project, string file)
         {
-            Encoding encoding = new UTF8Encoding(false);
             string extension = Path.GetExtension(file);
-            string template = await TemplateMap.GetTemplateFilePath(project, file);
-
-            var props = new Dictionary<string, string>() { { "extension", extension.ToLowerInvariant() } };
+            string template = await TemplateMap.GetTemplateFilePathAsync(project, file);
 
             if (!string.IsNullOrEmpty(template))
             {
                 int index = template.IndexOf("$$");
-                template = template.Remove(index, 2);
-                File.WriteAllText(file, template, encoding);
+
+                if (index > -1)
+                {
+                    template = template.Remove(index, 2);
+                }
+
+                await WriteToDiskAsync(file, template);
                 return index;
             }
 
-            File.WriteAllText(file, string.Empty, encoding);
+            await WriteToDiskAsync(file, string.Empty);
+
             return 0;
+        }
+
+        private static Encoding GetFileEncoding(string file)
+        {
+            string[] noBom = { ".cmd", ".bat", ".json" };
+            string ext = Path.GetExtension(file).ToLowerInvariant();
+
+            if (noBom.Contains(ext))
+                return new UTF8Encoding(false);
+
+            return new UTF8Encoding(true);
+        }
+
+        private static async System.Threading.Tasks.Task WriteToDiskAsync(string file, string content)
+        {
+            using (var writer = new StreamWriter(file, false, GetFileEncoding(file)))
+            {
+                await writer.WriteAsync(content);
+            }
         }
 
         static string[] GetParsedInput(string input)
@@ -209,11 +238,13 @@ namespace KennethScott.AddDbUpFile
             return returnValues;
         }
 
-        private static string FindFolder(UIHierarchyItem item)
+        private static string FindFolder(object item)
         {
-            Window2 window = _dte.ActiveWindow as Window2;
+            if (item == null)
+                return null;
 
-            if (window != null && window.Type == vsWindowType.vsWindowTypeDocument)
+
+            if (_dte.ActiveWindow is Window2 window && window.Type == vsWindowType.vsWindowTypeDocument)
             {
                 // if a document is active, use the document's containing directory
                 Document doc = _dte.ActiveDocument;
@@ -221,7 +252,7 @@ namespace KennethScott.AddDbUpFile
                 {
                     ProjectItem docItem = _dte.Solution.FindProjectItem(doc.FullName);
 
-                    if (docItem != null)
+                    if (docItem != null && docItem.Properties != null)
                     {
                         string fileName = docItem.Properties.Item("FullPath").Value.ToString();
                         if (File.Exists(fileName))
@@ -232,40 +263,55 @@ namespace KennethScott.AddDbUpFile
 
             string folder = null;
 
-            ProjectItem projectItem = item.Object as ProjectItem;
-            Project project = item.Object as Project;
-
-            if (projectItem != null)
+            var projectItem = item as ProjectItem;
+            if (projectItem != null && "{6BB5F8F0-4483-11D3-8BCF-00C04F8EC28C}" == projectItem.Kind) //Constants.vsProjectItemKindVirtualFolder
             {
-                string fileName = projectItem.FileNames[0];
-
-                if (File.Exists(fileName))
+                ProjectItems items = projectItem.ProjectItems;
+                foreach (ProjectItem it in items)
                 {
-                    folder = Path.GetDirectoryName(fileName);
-                }
-                else
-                {
-                    folder = fileName;
+                    if (File.Exists(it.FileNames[1]))
+                    {
+                        folder = Path.GetDirectoryName(it.FileNames[1]);
+                        break;
+                    }
                 }
             }
-            else if (project != null)
+            else
             {
-                folder = project.GetRootFolder();
-            }
+                var project = item as Project;
+                if (projectItem != null)
+                {
+                    string fileName = projectItem.FileNames[1];
 
+                    if (File.Exists(fileName))
+                    {
+                        folder = Path.GetDirectoryName(fileName);
+                    }
+                    else
+                    {
+                        folder = fileName;
+                    }
+
+
+                }
+                else if (project != null)
+                {
+                    folder = project.GetRootFolder();
+                }
+            }
             return folder;
         }
 
-        private static UIHierarchyItem GetSelectedItem()
-        {
-            var items = (Array)_dte.ToolWindows.SolutionExplorer.SelectedItems;
+        //private static UIHierarchyItem GetSelectedItem()
+        //{
+        //    var items = (Array)_dte.ToolWindows.SolutionExplorer.SelectedItems;
 
-            foreach (UIHierarchyItem selItem in items)
-            {
-                return selItem;
-            }
+        //    foreach (UIHierarchyItem selItem in items)
+        //    {
+        //        return selItem;
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
     }
 }
