@@ -302,16 +302,5 @@ namespace KennethScott.AddDbUpFile
             return folder;
         }
 
-        //private static UIHierarchyItem GetSelectedItem()
-        //{
-        //    var items = (Array)_dte.ToolWindows.SolutionExplorer.SelectedItems;
-
-        //    foreach (UIHierarchyItem selItem in items)
-        //    {
-        //        return selItem;
-        //    }
-
-        //    return null;
-        //}
     }
 }
