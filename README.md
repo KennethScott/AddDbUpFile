@@ -1,6 +1,7 @@
-# Add DbUp File
+# Add DbUp File (64 bit)
 
-Download the extension at the [VS Gallery](https://visualstudiogallery.msdn.microsoft.com/6066df80-eb05-4c6a-bdb1-6e4c15543084). 
+Download the original x86 (pre-VS2022) extension at the [VS Gallery](https://marketplace.visualstudio.com/items?itemName=vs-publisher-126251.AddDbUpFile). 
+Download the new x64 (VS2022) extension at the [VS Gallery](https://marketplace.visualstudio.com/items?itemName=vs-publisher-126251.AddDbUpFile64bit). 
 
 ---
 
@@ -38,12 +39,6 @@ folder **scripts** is created if it doesn't exist and the file
 ## Contribute
 Check out the [contribution guidelines](.github/CONTRIBUTING.md)
 if you want to contribute to this project.
-
-For cloning and building this project yourself, make sure
-to install the
-[Extensibility Tools 2015](https://visualstudiogallery.msdn.microsoft.com/ab39a092-1343-46e2-b0f1-6a3f91155aa6)
-extension for Visual Studio which enables some features
-used by this project.
 
 ## License
 [Apache 2.0](LICENSE)
