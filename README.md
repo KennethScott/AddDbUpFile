@@ -1,6 +1,7 @@
 # Add DbUp File (64 bit)
 
 Download the original x86 (pre-VS2022) extension at the [VS Gallery](https://marketplace.visualstudio.com/items?itemName=vs-publisher-126251.AddDbUpFile). 
+
 Download the new x64 (VS2022) extension at the [VS Gallery](https://marketplace.visualstudio.com/items?itemName=vs-publisher-126251.AddDbUpFile64bit). 
 
 ---
