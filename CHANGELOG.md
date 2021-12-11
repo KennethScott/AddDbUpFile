@@ -1,6 +1,12 @@
 
 # Changelog
 
+## 2.0
+**2021-12-08**
+- [x] Followed Mads lead and dropped support for x86/pre-VS2022.  The old x86 version will remain on the original Marketplace page, but there will
+be a new version published under "Add DbUp File (64-bit)".
+- [x] Minor update to sql.txt template regarding exception handling that is more suitable for SQL2012 and higher.
+
 ## 1.7
 **2019-06-02**
 
