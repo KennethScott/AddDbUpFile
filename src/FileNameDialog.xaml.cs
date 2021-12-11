@@ -12,7 +12,7 @@ namespace KennethScott.AddDbUpFile
     public partial class FileNameDialog : Window
     {
         private const string DEFAULT_TEXT = "Enter a file name";
-        private static List<string> _tips = new List<string> {
+        private static readonly List<string> _tips = new List<string> {
             "Tip: 'folder/file' also creates a new folder for the file",
             "Tip: Create folder by ending the name with a forward slash",
             "Tip: Separate names with commas to add multiple files and folders"
@@ -40,9 +40,13 @@ namespace KennethScott.AddDbUpFile
                     if (b.Key == Key.Escape)
                     {
                         if (string.IsNullOrWhiteSpace(txtName.Text) || txtName.Text == DEFAULT_TEXT)
+                        {
                             Close();
+                        }
                         else
+                        {
                             txtName.Text = string.Empty;
+                        }
                     }
                     else if (txtName.Text == DEFAULT_TEXT)
                     {
@@ -113,7 +117,7 @@ namespace KennethScott.AddDbUpFile
 
         private void cmbExtension_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            ckEmbeddedResource.IsChecked = (((ComboBoxItem)cmbExtension.SelectedItem).Content.ToString() == ".sql");
+            ckEmbeddedResource.IsChecked = (((ComboBoxItem)cmbExtension.SelectedItem).Content?.ToString() == ".sql");
         }
     }
 }
