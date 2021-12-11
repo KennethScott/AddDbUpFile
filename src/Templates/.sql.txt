@@ -30,20 +30,7 @@ BEGIN CATCH
             ROLLBACK TRANSACTION MyTran;            
         END;
 
-	-- Declare and set variables to hold error information.
-    DECLARE
-    	@ERROR_SEVERITY INT = ERROR_SEVERITY(),
-    	@ERROR_STATE	INT = ERROR_STATE(),
-    	@ERROR_NUMBER	INT = ERROR_NUMBER(),
-    	@ERROR_LINE		INT = ERROR_LINE(),
-    	@ERROR_MESSAGE	NVARCHAR(4000) = ERROR_MESSAGE();
+	;THROW  --Always make sure to lead with a semicolon.
 
-	-- RAISEERROR, in this instance, sends an error back to the caller of the stored procedure
-    RAISERROR('Msg %d, Line %d: %s',
-    	@ERROR_SEVERITY,
-    	@ERROR_STATE,
-    	@ERROR_NUMBER,
-    	@ERROR_LINE,
-    	@ERROR_MESSAGE);
 
 END CATCH;		
